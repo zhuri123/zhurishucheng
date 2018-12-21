@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang=en>
+    <head>
+        <meta charset=utf-8>
+        <meta http-equiv=X-UA-Compatible content="IE=edge">
+        <meta name=viewport content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,viewport-fit=cover">
+        <title>设备信息</title>
+        <style>
+            body {
+                background-color: white;
+                padding-top: env(safe-area-inset-top);
+                padding-top: constant(safe-area-inset-top);
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>获取设备信息示例</h1>
+        <h2>JSB 调用</h2>
+        <div id="info"></div>
+
+        <hr/>
+
+        <h2>Cookie 获取</h2>
+        <div id="cookie"></div>
+    </body>
+    <script>
+        function setupWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+            if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+            window.WVJBCallbacks = [callback];
+            var WVJBIframe = document.createElement('iframe');
+            WVJBIframe.style.display = 'none';
+            WVJBIframe.src = 'https://__bridge_loaded__';
+            document.documentElement.appendChild(WVJBIframe);
+            setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
+        }
+
+        setupWebViewJavascriptBridge(function(bridge) {
+            bridge.callHandler('jn-device-info', "", function responseCallback(responseData) {
+                console.log("Device Info:", responseData)
+                document.getElementById("info").innerHTML = responseData;
+            });
+        })
+
+        document.getElementById("cookie").innerHTML = document.cookie;
+    </script>
+</html>
